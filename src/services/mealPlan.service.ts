@@ -96,6 +96,9 @@ export class MealPlanService {
             readyInMinutes: recipe.readyInMinutes || 15,
             servings: recipe.servings || 1,
             summary: recipe.summary || "Nutritious daily meal recipe.",
+            cuisines: recipe.cuisines || [],
+            diets: recipe.diets || [],
+            dishTypes: recipe.dishTypes || [],
             ingredients: recipe.ingredients || [],
             instructions: recipe.instructions || [],
             nutrition: {

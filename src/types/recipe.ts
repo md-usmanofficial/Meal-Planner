@@ -155,9 +155,9 @@ export interface Recipe {
   image: string;
   readyInMinutes: number;
   servings: number;
-  cuisines: string[];
-  diets: string[];
-  dishTypes: string[];
+  cuisines?: string[];
+  diets?: string[];
+  dishTypes?: string[];
   summary: string;
   instructions: RecipeInstruction[];
   ingredients: RecipeIngredient[];
