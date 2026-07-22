@@ -1,15 +1,13 @@
 "use client";
 
 /**
- * Forgot Password Page — Phase 1 Authentication.
- *
- * Sends a password reset email via Supabase.
- * Shows success state after submission (prevents user enumeration).
+ * Forgot Password Page — Clean White & Soft Green Theme.
  */
 
 import { useActionState, useEffect } from "react";
 import Link from "next/link";
-import { Loader2, Mail } from "lucide-react";
+import { motion } from "framer-motion";
+import { Loader2, Mail, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { forgotPasswordAction } from "@/app/(auth)/actions";
 import { AuthFormField } from "@/components/auth/AuthFormField";
@@ -30,38 +28,46 @@ export default function ForgotPasswordPage() {
     if (state?.error) toast.error(state.error);
   }, [state?.error]);
 
-  // Show success state after email is sent
   if (state?.success) {
     return (
-      <div className="space-y-6 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-          <Mail className="h-8 w-8 text-primary" aria-hidden />
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-5 text-center"
+      >
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+          <Mail className="h-7 w-7" aria-hidden />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Check your inbox
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            Check Your Inbox 📩
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">{state.success}</p>
+          <p className="mt-2 text-xs text-slate-600 font-medium leading-relaxed">{state.success}</p>
         </div>
         <Link
           href={ROUTES.LOGIN}
-          className="inline-flex items-center text-sm font-medium text-primary hover:underline"
+          className="inline-flex items-center text-xs font-bold text-emerald-700 hover:underline"
         >
           ← Back to sign in
         </Link>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-5"
+    >
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Forgot your password?
+      <div className="space-y-1">
+        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+          Forgot Password? 🔑
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Enter your email and we&apos;ll send you a reset link.
+        <p className="text-xs text-slate-500 font-medium">
+          Enter your registered email and we'll send a password recovery link
         </p>
       </div>
 
@@ -73,44 +79,49 @@ export default function ForgotPasswordPage() {
           error={state?.fieldErrors?.email}
           required
         >
-          <Input
-            id="forgot-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            placeholder="you@example.com"
-            disabled={isPending}
-            className="h-11"
-          />
+          <div className="relative">
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              id="forgot-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              disabled={isPending}
+              className="h-10 rounded-xl bg-slate-50/50 border-slate-200 text-xs pl-10 text-slate-900 placeholder:text-slate-400 focus-visible:border-emerald-600 focus-visible:ring-emerald-500/20"
+            />
+          </div>
         </AuthFormField>
 
         <Button
           type="submit"
           id="forgot-submit"
           disabled={isPending}
-          className="h-11 w-full text-base font-semibold"
+          className="h-10 w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold shadow-md shadow-emerald-600/20 transition-all text-xs sm:text-sm mt-1"
         >
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-              Sending reset link…
+              Sending link…
             </>
           ) : (
-            "Send reset link"
+            <>
+              Send Reset Link <ArrowRight className="ml-1.5 h-4 w-4" />
+            </>
           )}
         </Button>
       </form>
 
       {/* Back to login */}
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-xs text-slate-600 font-medium">
         Remember your password?{" "}
         <Link
           href={ROUTES.LOGIN}
-          className="font-medium text-primary hover:underline"
+          className="font-extrabold text-emerald-700 hover:underline"
         >
           Sign in
         </Link>
       </p>
-    </div>
+    </motion.div>
   );
 }
