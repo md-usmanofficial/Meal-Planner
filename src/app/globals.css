@@ -6,8 +6,8 @@
 
 /* ============================================================
    DESIGN TOKENS — NutriPlan Color System
-   Inspired by the UI reference: violet primary, amber accent,
-   clean slate neutrals. Production-quality theme.
+   Fresh Emerald Green & Clean White Light Mode + Sleek Dark Mode.
+   100% Crisp Text Readability Guarantee.
    ============================================================ */
 
 @theme inline {
@@ -53,65 +53,63 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* NutriPlan custom brand colors */
-  --color-brand-50:  oklch(0.97 0.03 290);
-  --color-brand-100: oklch(0.93 0.06 290);
-  --color-brand-200: oklch(0.87 0.10 290);
-  --color-brand-300: oklch(0.78 0.14 290);
-  --color-brand-400: oklch(0.67 0.18 290);
-  --color-brand-500: oklch(0.58 0.22 290);   /* Primary brand violet */
-  --color-brand-600: oklch(0.50 0.24 290);
-  --color-brand-700: oklch(0.42 0.22 290);
-  --color-brand-800: oklch(0.34 0.18 290);
-  --color-brand-900: oklch(0.26 0.14 290);
+  /* Emerald brand palette */
+  --color-brand-50:  oklch(0.97 0.02 160);
+  --color-brand-100: oklch(0.92 0.05 160);
+  --color-brand-200: oklch(0.85 0.09 160);
+  --color-brand-300: oklch(0.75 0.13 160);
+  --color-brand-400: oklch(0.67 0.17 160);
+  --color-brand-500: oklch(0.60 0.19 160);   /* Primary Emerald */
+  --color-brand-600: oklch(0.52 0.20 160);
+  --color-brand-700: oklch(0.44 0.18 160);
+  --color-brand-800: oklch(0.36 0.15 160);
+  --color-brand-900: oklch(0.28 0.12 160);
 
-  /* Amber accent (matches UI reference CTA buttons) */
   --color-amber-400: oklch(0.83 0.17 85);
   --color-amber-500: oklch(0.77 0.19 80);
   --color-amber-600: oklch(0.70 0.18 75);
 
-  /* Semantic success/warning/danger */
-  --color-success: oklch(0.65 0.18 155);
+  --color-success: oklch(0.60 0.19 160);
   --color-warning: oklch(0.77 0.19 80);
   --color-danger:  oklch(0.62 0.22 25);
   --color-info:    oklch(0.62 0.19 255);
 }
 
 /* ============================================================
-   LIGHT MODE
+   LIGHT MODE — Fresh Emerald & White
    ============================================================ */
 :root {
-  --background: oklch(0.985 0.002 290);
-  --foreground: oklch(0.145 0.01 290);
+  --background: oklch(0.985 0.003 160);
+  --foreground: oklch(0.145 0.01 240);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0.01 290);
+  --card-foreground: oklch(0.145 0.01 240);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0.01 290);
+  --popover-foreground: oklch(0.145 0.01 240);
 
-  /* Violet primary */
-  --primary: oklch(0.58 0.22 290);
+  /* Emerald primary */
+  --primary: oklch(0.60 0.19 160);
   --primary-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.95 0.02 290);
-  --secondary-foreground: oklch(0.42 0.10 290);
+  --secondary: oklch(0.96 0.02 160);
+  --secondary-foreground: oklch(0.30 0.10 160);
 
-  --muted: oklch(0.96 0.01 290);
-  --muted-foreground: oklch(0.55 0.04 290);
+  --muted: oklch(0.96 0.015 160);
+  --muted-foreground: oklch(0.48 0.03 240);
 
-  --accent: oklch(0.93 0.04 290);
-  --accent-foreground: oklch(0.42 0.10 290);
+  --accent: oklch(0.94 0.03 160);
+  --accent-foreground: oklch(0.25 0.10 160);
 
   --destructive: oklch(0.577 0.245 27.325);
 
-  --border: oklch(0.90 0.02 290);
-  --input: oklch(0.92 0.02 290);
-  --ring: oklch(0.58 0.22 290);
+  --border: oklch(0.91 0.02 160);
+  --input: oklch(0.92 0.02 160);
+  --ring: oklch(0.60 0.19 160);
 
   /* Recharts chart colors */
-  --chart-1: oklch(0.58 0.22 290);   /* Violet */
-  --chart-2: oklch(0.65 0.18 155);   /* Green */
+  --chart-1: oklch(0.60 0.19 160);   /* Emerald */
+  --chart-2: oklch(0.65 0.18 190);   /* Teal */
   --chart-3: oklch(0.77 0.19 80);    /* Amber */
   --chart-4: oklch(0.62 0.19 255);   /* Blue */
   --chart-5: oklch(0.62 0.22 25);    /* Red */
@@ -119,63 +117,61 @@
   --radius: 0.75rem;
 
   /* Sidebar */
-  --sidebar: oklch(0.99 0.003 290);
-  --sidebar-foreground: oklch(0.145 0.01 290);
-  --sidebar-primary: oklch(0.58 0.22 290);
+  --sidebar: oklch(0.99 0.003 160);
+  --sidebar-foreground: oklch(0.145 0.01 240);
+  --sidebar-primary: oklch(0.60 0.19 160);
   --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.93 0.04 290);
-  --sidebar-accent-foreground: oklch(0.42 0.10 290);
-  --sidebar-border: oklch(0.90 0.02 290);
-  --sidebar-ring: oklch(0.58 0.22 290);
+  --sidebar-accent: oklch(0.94 0.03 160);
+  --sidebar-accent-foreground: oklch(0.25 0.10 160);
+  --sidebar-border: oklch(0.91 0.02 160);
+  --sidebar-ring: oklch(0.60 0.19 160);
 }
 
 /* ============================================================
-   DARK MODE
+   DARK MODE — Deep Emerald Slate with Crisp Readable Text
    ============================================================ */
 .dark {
-  --background: oklch(0.13 0.015 290);
-  --foreground: oklch(0.97 0.005 290);
+  --background: oklch(0.13 0.015 160);
+  --foreground: oklch(0.97 0.005 160);
 
-  --card: oklch(0.18 0.015 290);
-  --card-foreground: oklch(0.97 0.005 290);
+  --card: oklch(0.18 0.015 160);
+  --card-foreground: oklch(0.97 0.005 160);
 
-  --popover: oklch(0.18 0.015 290);
-  --popover-foreground: oklch(0.97 0.005 290);
+  --popover: oklch(0.18 0.015 160);
+  --popover-foreground: oklch(0.97 0.005 160);
 
-  --primary: oklch(0.67 0.18 290);
-  --primary-foreground: oklch(0.13 0.015 290);
+  --primary: oklch(0.65 0.18 160);
+  --primary-foreground: oklch(0.13 0.015 160);
 
-  --secondary: oklch(0.24 0.02 290);
-  --secondary-foreground: oklch(0.85 0.05 290);
+  --secondary: oklch(0.24 0.02 160);
+  --secondary-foreground: oklch(0.90 0.03 160);
 
-  --muted: oklch(0.22 0.02 290);
-  --muted-foreground: oklch(0.65 0.05 290);
+  --muted: oklch(0.22 0.02 160);
+  --muted-foreground: oklch(0.70 0.03 160);
 
-  --accent: oklch(0.26 0.025 290);
-  --accent-foreground: oklch(0.85 0.05 290);
+  --accent: oklch(0.26 0.025 160);
+  --accent-foreground: oklch(0.90 0.03 160);
 
   --destructive: oklch(0.70 0.19 22);
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.67 0.18 290);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.65 0.18 160);
 
-  /* Chart colors (slightly adjusted for dark bg) */
-  --chart-1: oklch(0.67 0.18 290);
-  --chart-2: oklch(0.70 0.18 155);
+  --chart-1: oklch(0.65 0.18 160);
+  --chart-2: oklch(0.70 0.18 190);
   --chart-3: oklch(0.80 0.18 80);
   --chart-4: oklch(0.65 0.19 255);
   --chart-5: oklch(0.68 0.21 25);
 
-  /* Sidebar */
-  --sidebar: oklch(0.16 0.015 290);
-  --sidebar-foreground: oklch(0.97 0.005 290);
-  --sidebar-primary: oklch(0.67 0.18 290);
-  --sidebar-primary-foreground: oklch(0.13 0.015 290);
-  --sidebar-accent: oklch(0.26 0.025 290);
-  --sidebar-accent-foreground: oklch(0.85 0.05 290);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.67 0.18 290);
+  --sidebar: oklch(0.16 0.015 160);
+  --sidebar-foreground: oklch(0.97 0.005 160);
+  --sidebar-primary: oklch(0.65 0.18 160);
+  --sidebar-primary-foreground: oklch(0.13 0.015 160);
+  --sidebar-accent: oklch(0.26 0.025 160);
+  --sidebar-accent-foreground: oklch(0.90 0.03 160);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.65 0.18 160);
 }
 
 /* ============================================================
@@ -194,7 +190,6 @@
     scroll-behavior: smooth;
   }
 
-  /* Smooth scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -209,12 +204,10 @@
     @apply bg-muted-foreground/40;
   }
 
-  /* Focus rings */
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 
-  /* Headings */
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight;
   }
@@ -224,52 +217,46 @@
    UTILITY CLASSES
    ============================================================ */
 @layer utilities {
-  /* Glass effect — used for dashboard cards */
   .glass {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    background: oklch(1 0 0 / 60%);
-    border: 1px solid oklch(1 0 0 / 20%);
+    background: oklch(1 0 0 / 70%);
+    border: 1px solid oklch(0.91 0.02 160 / 60%);
   }
   .dark .glass {
-    background: oklch(0.18 0.015 290 / 70%);
-    border: 1px solid oklch(1 0 0 / 10%);
+    background: oklch(0.18 0.015 160 / 75%);
+    border: 1px solid oklch(1 0 0 / 12%);
   }
 
-  /* Gradient text */
   .gradient-text {
-    background: linear-gradient(135deg, oklch(0.58 0.22 290), oklch(0.67 0.18 290), oklch(0.77 0.19 80));
+    background: linear-gradient(135deg, oklch(0.55 0.20 160), oklch(0.65 0.18 180), oklch(0.75 0.18 80));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Gradient background for hero/CTA sections */
   .gradient-brand {
-    background: linear-gradient(135deg, oklch(0.58 0.22 290) 0%, oklch(0.50 0.24 290) 100%);
+    background: linear-gradient(135deg, oklch(0.60 0.19 160) 0%, oklch(0.50 0.20 160) 100%);
   }
 
-  /* Card hover lift */
   .card-hover {
     @apply transition-all duration-200 ease-out;
   }
   .card-hover:hover {
-    @apply shadow-lg -translate-y-0.5;
+    @apply shadow-lg -translate-y-0.5 border-emerald-300 dark:border-emerald-700;
   }
 
-  /* Progress bar fill animation */
   .progress-fill {
     @apply transition-all duration-700 ease-out;
   }
 
-  /* Nutrition macro colors */
   .text-macro-protein { color: oklch(0.62 0.19 255); }
   .text-macro-carbs   { color: oklch(0.77 0.19 80);  }
   .text-macro-fat     { color: oklch(0.62 0.22 25);  }
-  .text-macro-fiber   { color: oklch(0.65 0.18 155); }
+  .text-macro-fiber   { color: oklch(0.60 0.19 160); }
 
   .bg-macro-protein { background-color: oklch(0.62 0.19 255); }
   .bg-macro-carbs   { background-color: oklch(0.77 0.19 80);  }
   .bg-macro-fat     { background-color: oklch(0.62 0.22 25);  }
-  .bg-macro-fiber   { background-color: oklch(0.65 0.18 155); }
+  .bg-macro-fiber   { background-color: oklch(0.60 0.19 160); }
 }

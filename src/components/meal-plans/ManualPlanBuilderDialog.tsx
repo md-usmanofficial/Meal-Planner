@@ -64,7 +64,7 @@ export function ManualPlanBuilderDialog({ onSuccess }: ManualPlanBuilderDialogPr
   const [isPending, setIsPending] = useState(false);
 
   // Config State
-  const [planName, setPlanName] = useState("My Custom Weekly Plan");
+  const [planName, setPlanName] = useState("");
   const [daysCount, setDaysCount] = useState(7);
   const [includeDessert, setIncludeDessert] = useState(false);
 

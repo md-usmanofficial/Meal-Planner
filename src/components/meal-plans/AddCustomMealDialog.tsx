@@ -2,7 +2,7 @@
 
 /**
  * AddCustomMealDialog — Modal for manually adding custom foods or recipe items to a meal plan slot.
- * Asks for Name, Calories, Protein, Carbs, Fat, Fiber, and optional recipe instructions.
+ * Clean form with clear placeholders (no pre-filled clutter).
  */
 
 import { useState } from "react";
@@ -35,11 +35,11 @@ export function AddCustomMealDialog({ mealPlanId, dateStr, onSuccess }: AddCusto
 
   const [name, setName] = useState("");
   const [mealType, setMealType] = useState<MealType>("BREAKFAST");
-  const [calories, setCalories] = useState("350");
-  const [proteinG, setProteinG] = useState("20");
-  const [carbsG, setCarbsG] = useState("30");
-  const [fatG, setFatG] = useState("10");
-  const [fiberG, setFiberG] = useState("3");
+  const [calories, setCalories] = useState("");
+  const [proteinG, setProteinG] = useState("");
+  const [carbsG, setCarbsG] = useState("");
+  const [fatG, setFatG] = useState("");
+  const [fiberG, setFiberG] = useState("");
   const [instructions, setInstructions] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,6 +67,11 @@ export function AddCustomMealDialog({ mealPlanId, dateStr, onSuccess }: AddCusto
       toast.success(`Added "${name}" to your meal plan! 🍳`);
       setOpen(false);
       setName("");
+      setCalories("");
+      setProteinG("");
+      setCarbsG("");
+      setFatG("");
+      setFiberG("");
       setInstructions("");
       onSuccess?.();
     } catch (err) {
@@ -79,8 +84,8 @@ export function AddCustomMealDialog({ mealPlanId, dateStr, onSuccess }: AddCusto
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="rounded-xl border-dashed border-primary/40 text-primary hover:bg-primary/10 text-xs">
-          <Plus className="mr-1 h-3.5 w-3.5" /> Add Food
+        <Button variant="outline" size="sm" className="rounded-xl border-dashed border-primary/40 text-primary hover:bg-primary/10 text-xs font-semibold">
+          <Plus className="mr-1 h-3.5 w-3.5" /> Add Custom Food
         </Button>
       </DialogTrigger>
 
@@ -128,23 +133,23 @@ export function AddCustomMealDialog({ mealPlanId, dateStr, onSuccess }: AddCusto
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               <div className="space-y-1">
                 <Label className="text-[10px] text-muted-foreground font-semibold">Calories</Label>
-                <Input type="number" value={calories} onChange={(e) => setCalories(e.target.value)} className="h-9 rounded-xl text-xs" required />
+                <Input type="number" value={calories} onChange={(e) => setCalories(e.target.value)} placeholder="350" className="h-9 rounded-xl text-xs" required />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] text-muted-foreground font-semibold">Protein (g)</Label>
-                <Input type="number" value={proteinG} onChange={(e) => setProteinG(e.target.value)} className="h-9 rounded-xl text-xs" required />
+                <Input type="number" value={proteinG} onChange={(e) => setProteinG(e.target.value)} placeholder="20" className="h-9 rounded-xl text-xs" required />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] text-muted-foreground font-semibold">Carbs (g)</Label>
-                <Input type="number" value={carbsG} onChange={(e) => setCarbsG(e.target.value)} className="h-9 rounded-xl text-xs" required />
+                <Input type="number" value={carbsG} onChange={(e) => setCarbsG(e.target.value)} placeholder="30" className="h-9 rounded-xl text-xs" required />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] text-muted-foreground font-semibold">Fat (g)</Label>
-                <Input type="number" value={fatG} onChange={(e) => setFatG(e.target.value)} className="h-9 rounded-xl text-xs" required />
+                <Input type="number" value={fatG} onChange={(e) => setFatG(e.target.value)} placeholder="10" className="h-9 rounded-xl text-xs" required />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] text-muted-foreground font-semibold">Fiber (g)</Label>
-                <Input type="number" value={fiberG} onChange={(e) => setFiberG(e.target.value)} className="h-9 rounded-xl text-xs" />
+                <Input type="number" value={fiberG} onChange={(e) => setFiberG(e.target.value)} placeholder="3" className="h-9 rounded-xl text-xs" />
               </div>
             </div>
           </div>

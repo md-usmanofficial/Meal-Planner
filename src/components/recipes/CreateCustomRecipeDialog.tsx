@@ -2,12 +2,11 @@
 
 /**
  * CreateCustomRecipeDialog — Dialog to create or edit custom recipes.
- * Captures Title, Prep Time, Servings, Calories, Protein, Carbs, Fat, Fiber,
- * Product Description / Overview, dynamic Ingredients list, and Cooking Steps.
+ * Clean initial state with helpful placeholders (no hardcoded pre-filled values).
  */
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Edit3, Utensils } from "lucide-react";
+import { Plus, Trash2, Utensils } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -44,34 +43,34 @@ export function CreateCustomRecipeDialog({
 
   const [isPending, setIsPending] = useState(false);
 
-  // Form State
+  // Form State — Clean initial values with clear placeholders
   const [title, setTitle] = useState("");
-  const [readyInMinutes, setReadyInMinutes] = useState("20");
-  const [servings, setServings] = useState("1");
-  const [calories, setCalories] = useState("400");
-  const [proteinG, setProteinG] = useState("25");
-  const [carbsG, setCarbsG] = useState("45");
-  const [fatG, setFatG] = useState("15");
-  const [fiberG, setFiberG] = useState("5");
+  const [readyInMinutes, setReadyInMinutes] = useState("");
+  const [servings, setServings] = useState("");
+  const [calories, setCalories] = useState("");
+  const [proteinG, setProteinG] = useState("");
+  const [carbsG, setCarbsG] = useState("");
+  const [fatG, setFatG] = useState("");
+  const [fiberG, setFiberG] = useState("");
   const [summary, setSummary] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
   // Dynamic Lists State
   const [ingredients, setIngredients] = useState<Array<{ name: string; amount: string; unit: string }>>([
-    { name: "", amount: "1", unit: "serving" },
+    { name: "", amount: "", unit: "g" },
   ]);
   const [instructions, setInstructions] = useState<string[]>([""]);
 
   useEffect(() => {
     if (initialRecipe) {
       setTitle(initialRecipe.title || "");
-      setReadyInMinutes(String(initialRecipe.readyInMinutes || 20));
-      setServings(String(initialRecipe.servings || 1));
-      setCalories(String(initialRecipe.nutrition?.calories || 400));
-      setProteinG(String(initialRecipe.nutrition?.proteinG || 25));
-      setCarbsG(String(initialRecipe.nutrition?.carbsG || 45));
-      setFatG(String(initialRecipe.nutrition?.fatG || 15));
-      setFiberG(String(initialRecipe.nutrition?.fiberG || 5));
+      setReadyInMinutes(String(initialRecipe.readyInMinutes || ""));
+      setServings(String(initialRecipe.servings || ""));
+      setCalories(String(initialRecipe.nutrition?.calories || ""));
+      setProteinG(String(initialRecipe.nutrition?.proteinG || ""));
+      setCarbsG(String(initialRecipe.nutrition?.carbsG || ""));
+      setFatG(String(initialRecipe.nutrition?.fatG || ""));
+      setFiberG(String(initialRecipe.nutrition?.fiberG || ""));
       setSummary(initialRecipe.summary || "");
       setImageUrl(initialRecipe.image || "");
 
@@ -79,7 +78,7 @@ export function CreateCustomRecipeDialog({
         setIngredients(
           initialRecipe.ingredients.map((ing) => ({
             name: ing.name,
-            amount: String(ing.amount || 1),
+            amount: String(ing.amount || ""),
             unit: ing.unit || "g",
           }))
         );
@@ -91,7 +90,7 @@ export function CreateCustomRecipeDialog({
   }, [initialRecipe]);
 
   const handleAddIngredient = () => {
-    setIngredients((prev) => [...prev, { name: "", amount: "100", unit: "g" }]);
+    setIngredients((prev) => [...prev, { name: "", amount: "", unit: "g" }]);
   };
 
   const handleRemoveIngredient = (index: number) => {
@@ -151,7 +150,7 @@ export function CreateCustomRecipeDialog({
         },
       });
 
-      toast.success(initialRecipe ? "Recipe updated!" : "Custom recipe created & saved to database! 🍳");
+      toast.success(initialRecipe ? "Recipe updated!" : "Custom recipe created & saved! 🍳");
       setOpen(false);
       onSuccess?.(res.recipe);
     } catch (err) {
@@ -202,15 +201,15 @@ export function CreateCustomRecipeDialog({
           <div className="grid grid-cols-3 gap-2 bg-muted/20 p-3 rounded-2xl border border-border/60">
             <div className="space-y-1">
               <Label className="text-[10px] text-muted-foreground font-semibold">Prep Time (Mins)</Label>
-              <Input type="number" value={readyInMinutes} onChange={(e) => setReadyInMinutes(e.target.value)} className="h-9 rounded-xl text-xs font-bold" required />
+              <Input type="number" value={readyInMinutes} onChange={(e) => setReadyInMinutes(e.target.value)} placeholder="20" className="h-9 rounded-xl text-xs font-bold" required />
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] text-muted-foreground font-semibold">Servings (Yield)</Label>
-              <Input type="number" value={servings} onChange={(e) => setServings(e.target.value)} className="h-9 rounded-xl text-xs font-bold" required />
+              <Input type="number" value={servings} onChange={(e) => setServings(e.target.value)} placeholder="1" className="h-9 rounded-xl text-xs font-bold" required />
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] text-muted-foreground font-semibold">Calories (kcal)</Label>
-              <Input type="number" value={calories} onChange={(e) => setCalories(e.target.value)} className="h-9 rounded-xl text-xs font-bold text-amber-500" required />
+              <Input type="number" value={calories} onChange={(e) => setCalories(e.target.value)} placeholder="400" className="h-9 rounded-xl text-xs font-bold text-amber-500" required />
             </div>
           </div>
 
@@ -220,26 +219,26 @@ export function CreateCustomRecipeDialog({
             <div className="grid grid-cols-4 gap-2">
               <div className="space-y-1">
                 <Label className="text-[10px] text-blue-500 font-bold">Protein (g)</Label>
-                <Input type="number" value={proteinG} onChange={(e) => setProteinG(e.target.value)} className="h-9 rounded-xl text-xs" required />
+                <Input type="number" value={proteinG} onChange={(e) => setProteinG(e.target.value)} placeholder="25" className="h-9 rounded-xl text-xs" required />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] text-purple-500 font-bold">Carbs (g)</Label>
-                <Input type="number" value={carbsG} onChange={(e) => setCarbsG(e.target.value)} className="h-9 rounded-xl text-xs" required />
+                <Input type="number" value={carbsG} onChange={(e) => setCarbsG(e.target.value)} placeholder="45" className="h-9 rounded-xl text-xs" required />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] text-amber-500 font-bold">Fat (g)</Label>
-                <Input type="number" value={fatG} onChange={(e) => setFatG(e.target.value)} className="h-9 rounded-xl text-xs" required />
+                <Input type="number" value={fatG} onChange={(e) => setFatG(e.target.value)} placeholder="15" className="h-9 rounded-xl text-xs" required />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] text-emerald-500 font-bold">Fiber (g)</Label>
-                <Input type="number" value={fiberG} onChange={(e) => setFiberG(e.target.value)} className="h-9 rounded-xl text-xs" />
+                <Input type="number" value={fiberG} onChange={(e) => setFiberG(e.target.value)} placeholder="5" className="h-9 rounded-xl text-xs" />
               </div>
             </div>
           </div>
 
           {/* Description */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-bold">Food Description / Overview (Optional, fallback N/A)</Label>
+            <Label className="text-xs font-bold">Food Description / Overview (Optional)</Label>
             <Textarea
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
