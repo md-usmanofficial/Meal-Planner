@@ -162,9 +162,9 @@ export interface Recipe {
   instructions: RecipeInstruction[];
   ingredients: RecipeIngredient[];
   nutrition: RecipeNutrition | null;
-  healthScore: number | null;
-  aggregateLikes: number | null;
-  sourceUrl: string | null;
+  healthScore?: number | null;
+  aggregateLikes?: number | null;
+  sourceUrl?: string | null;
 }
 
 export interface RecipeInstruction {
