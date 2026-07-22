@@ -8,7 +8,7 @@
  * - Water slot ticks load from water_logs table on page refresh.
  * - Deterministic time rank sorting guarantees schedule items never shift position when ticked.
  * - AI recipes carry full ingredients & step-by-step instructions into RecipeDetailModal.
- * - Features SmartTipBar for goal-based nutrition & exercise recommendations!
+ * - Features compact auto-rotating SmartTipBar positioned right inside upper goal cards.
  */
 
 import { useState, useEffect } from "react";
@@ -59,13 +59,11 @@ export default function DashboardPage() {
   const fetchActiveMealPlan = async () => {
     setIsFetchingPlans(true);
     try {
-      // 1. Fetch weekly goal completion progress & water log count from database
       const weeklyData = await getWeeklyActivityProgressAction();
       setWeeklyActivity(weeklyData);
 
       const waterLogsCount = await getTodayWaterLogsCountAction();
 
-      // 2. Fetch active meal plan
       const res = await fetch("/api/meal-plans");
       if (res.ok) {
         const json = await res.json();
@@ -95,7 +93,6 @@ export default function DashboardPage() {
               );
             }
 
-            // Construct items with water slots restored from PostgreSQL waterLogsCount
             const dynamicSchedule: Array<ScheduleItem & { rank: number }> = [
               {
                 id: "w1",
@@ -160,7 +157,6 @@ export default function DashboardPage() {
               }
             });
 
-            // Enforce strict deterministic sorting by rank
             dynamicSchedule.sort((a, b) => a.rank - b.rank);
             setScheduleItems(dynamicSchedule);
           } else {
@@ -185,20 +181,17 @@ export default function DashboardPage() {
     fetchActiveMealPlan();
   }, []);
 
-  // Toggle completion of schedule items & persist to PostgreSQL database
   const handleToggleItem = async (id: string) => {
     const targetItem = scheduleItems.find((i) => i.id === id);
     if (!targetItem) return;
 
     const newStatus = !targetItem.completed;
 
-    // Optimistic UI update keeping strict rank sorting
     const updatedSchedule = scheduleItems.map((item) =>
       item.id === id ? { ...item, completed: newStatus } : item
     );
     setScheduleItems(updatedSchedule);
 
-    // Calculate metrics for database sync
     const completedList = updatedSchedule.filter((i) => i.completed);
     const caloriesConsumed = completedList.reduce((acc, item) => acc + (item.calories || 0), 0);
     const proteinConsumedG = completedList.reduce((acc, item) => acc + (item.proteinG || 0), 0);
@@ -208,7 +201,6 @@ export default function DashboardPage() {
       .filter((i) => i.type === "Water Intake")
       .reduce((acc, item) => acc + (item.waterMl || 500), 0);
 
-    // Database Sync
     try {
       if (id.startsWith("w")) {
         await toggleWaterSlotAction(id, targetItem.waterMl || 500, newStatus);
@@ -232,7 +224,6 @@ export default function DashboardPage() {
     }
   };
 
-  // Calculate live consumed metrics based on completed items
   const completedItems = scheduleItems.filter((i) => i.completed);
   const caloriesConsumed = completedItems.reduce((acc, item) => acc + (item.calories || 0), 0);
   const proteinConsumedG = completedItems.reduce((acc, item) => acc + (item.proteinG || 0), 0);
@@ -246,7 +237,6 @@ export default function DashboardPage() {
   const caloriesGoal = nutritionGoal?.calories || 2000;
   const todayCompletionPercentage = caloriesGoal > 0 ? Math.min(100, Math.round((caloriesConsumed / caloriesGoal) * 100)) : 0;
 
-  // Active upcoming recipe for Spotlight
   const upcomingMeal = scheduleItems.find((i) => !i.completed && i.recipeData) || scheduleItems.find((i) => i.recipeData);
   const activeSpotlightRecipe: Recipe | null = upcomingMeal?.recipeData || null;
 
@@ -301,9 +291,9 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Middle Column: Goals Report + Today's Intake + Activity Widget (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Report Cards (Water 2.0L goal, Weight, Calories) */}
+        {/* Middle Column: Goals Report + Auto-Rotating Tip Bar + Today's Intake (5 cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          {/* Upper Goals Report Cards */}
           <NutritionReport
             waterMl={waterConsumedMl}
             waterGoalMl={2000}
@@ -312,6 +302,9 @@ export default function DashboardPage() {
             caloriesGoal={caloriesGoal}
             caloriesConsumed={caloriesConsumed}
           />
+
+          {/* SMART TIP BAR POSITIONED INSIDE THE UPPER CARD GAP */}
+          <SmartTipBar userGoal={profile?.goal} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Today Intake (Live Fat, Protein, Carbs) */}
@@ -339,9 +332,6 @@ export default function DashboardPage() {
           />
         </div>
       </div>
-
-      {/* NEW: Smart Goal-Based Nutrition & Exercise Tip Bar */}
-      <SmartTipBar userGoal={profile?.goal} />
 
       {/* Recipe Detail Modal for Explore Recipe CTA */}
       <RecipeDetailModal

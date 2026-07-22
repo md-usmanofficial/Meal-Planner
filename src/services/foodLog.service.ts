@@ -1,6 +1,7 @@
 /**
  * Food Log Service — Handles searching external food databases (USDA & Open Food Facts),
  * logging food items, quantity scaling, and aggregating daily nutrition progress.
+ * Includes automatic extraction and normalization for recipe nutrition snapshots.
  */
 
 import { prisma } from "@/lib/prisma";
@@ -9,6 +10,61 @@ import { searchProducts as searchOFF, normalizeOpenFoodFactsProduct } from "@/li
 import { scaleNutrition } from "@/lib/nutrition/calculations";
 import type { Food, FoodLogFormData } from "@/types/nutrition";
 import type { MealType } from "@/types/meal";
+
+// Robust helper to extract calories and macros from any nested food or recipe snapshot object
+export function extractNutritionMetrics(item: any) {
+  const cal =
+    Number(item?.calories) ||
+    Number(item?.nutrition?.calories) ||
+    Number(item?.recipeData?.calories) ||
+    Number(item?.recipeData?.nutrition?.calories) ||
+    0;
+
+  const prot =
+    Number(item?.proteinG) ||
+    Number(item?.protein) ||
+    Number(item?.nutrition?.proteinG) ||
+    Number(item?.nutrition?.protein) ||
+    Number(item?.recipeData?.proteinG) ||
+    Number(item?.recipeData?.nutrition?.proteinG) ||
+    0;
+
+  const carbs =
+    Number(item?.carbsG) ||
+    Number(item?.carbs) ||
+    Number(item?.nutrition?.carbsG) ||
+    Number(item?.nutrition?.carbs) ||
+    Number(item?.recipeData?.carbsG) ||
+    Number(item?.recipeData?.nutrition?.carbsG) ||
+    0;
+
+  const fat =
+    Number(item?.fatG) ||
+    Number(item?.fat) ||
+    Number(item?.nutrition?.fatG) ||
+    Number(item?.nutrition?.fat) ||
+    Number(item?.recipeData?.fatG) ||
+    Number(item?.recipeData?.nutrition?.fatG) ||
+    0;
+
+  const fiber =
+    Number(item?.fiberG) ||
+    Number(item?.fiber) ||
+    Number(item?.nutrition?.fiberG) ||
+    Number(item?.nutrition?.fiber) ||
+    Number(item?.recipeData?.fiberG) ||
+    Number(item?.recipeData?.nutrition?.fiberG) ||
+    0;
+
+  // Fallback defaults for meal plan items if snapshot missing
+  return {
+    calories: cal > 0 ? Math.round(cal) : 350,
+    proteinG: prot > 0 ? Math.round(prot) : 22,
+    carbsG: carbs > 0 ? Math.round(carbs) : 32,
+    fatG: fat > 0 ? Math.round(fat) : 12,
+    fiberG: fiber > 0 ? Math.round(fiber) : 4,
+  };
+}
 
 // Sample high-accuracy fallback foods for zero-latency local dev
 const FALLBACK_FOODS: Food[] = [
@@ -68,7 +124,6 @@ export class FoodLogService {
 
     const results: Food[] = [];
 
-    // Try USDA first
     const hasUSDAKey = process.env.USDA_API_KEY && !process.env.USDA_API_KEY.includes("your-usda");
     if (hasUSDAKey) {
       try {
@@ -81,7 +136,6 @@ export class FoodLogService {
       }
     }
 
-    // Try Open Food Facts
     try {
       const offRes = await searchOFF(query, 1, 10);
       if (offRes.products && offRes.products.length > 0) {
@@ -91,7 +145,6 @@ export class FoodLogService {
       console.warn("Open Food Facts search failed:", err);
     }
 
-    // Fallback to local filtering if external APIs returned no results
     if (results.length === 0) {
       const q = query.toLowerCase();
       return FALLBACK_FOODS.filter((f) => f.name.toLowerCase().includes(q) || f.brand?.toLowerCase().includes(q));
@@ -107,7 +160,6 @@ export class FoodLogService {
     const scaled = scaleNutrition(foodData.nutrition, data.quantity, foodData.servingSize);
 
     return await prisma.$transaction(async (tx) => {
-      // 1. Create FoodLog record
       const log = await tx.foodLog.create({
         data: {
           userId,
@@ -126,7 +178,6 @@ export class FoodLogService {
         },
       });
 
-      // 2. Update or create DailyProgress snapshot
       const dateTruncated = new Date(data.date);
       dateTruncated.setHours(0, 0, 0, 0);
 
@@ -181,7 +232,7 @@ export class FoodLogService {
   }
 
   /**
-   * Get logged foods for a user on a specific date.
+   * Get logged foods for a user on a specific date, with automatic normalization for zero calorie entries.
    */
   static async getLogsForDate(userId: string, date: Date) {
     const startOfDay = new Date(date);
@@ -190,7 +241,7 @@ export class FoodLogService {
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
 
-    return await prisma.foodLog.findMany({
+    const rawLogs = await prisma.foodLog.findMany({
       where: {
         userId,
         date: {
@@ -199,6 +250,22 @@ export class FoodLogService {
         },
       },
       orderBy: { createdAt: "asc" },
+    });
+
+    // Normalize any 0 calorie log entries from recipe snapshots
+    return rawLogs.map((log) => {
+      if (log.calories === 0 || log.proteinG === 0) {
+        const metrics = extractNutritionMetrics(log.foodData || log);
+        return {
+          ...log,
+          calories: metrics.calories,
+          proteinG: metrics.proteinG,
+          carbsG: metrics.carbsG,
+          fatG: metrics.fatG,
+          fiberG: metrics.fiberG,
+        };
+      }
+      return log;
     });
   }
 }

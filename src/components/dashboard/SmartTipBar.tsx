@@ -1,159 +1,105 @@
 "use client";
 
 /**
- * SmartTipBar — Personalized Nutrition & Exercise Advice Widget.
- * Suggests tailored diet & workout tips based on the user's active fitness goal.
+ * SmartTipBar — Compact, Auto-Rotating Nutrition & Exercise Tip Bar.
+ * Displays ONE advice item at a time, auto-changes over time, no manual buttons, no goal badges.
  */
 
-import { useState } from "react";
-import { Lightbulb, Dumbbell, Sparkles, RefreshCw, ArrowRight, ShieldCheck, Flame, HeartPulse } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { Lightbulb, Dumbbell, Sparkles } from "lucide-react";
 import type { Goal } from "@/types/profile";
 
 interface SmartTipBarProps {
   userGoal?: Goal | string;
 }
 
-// Tailored Nutrition & Exercise Tips Database
-const TIPS_DATABASE: Record<
+const ALL_TIPS: Record<
   string,
-  Array<{ nutrition: string; exercise: string; focus: string }>
+  Array<{ text: string; category: "nutrition" | "exercise" }>
 > = {
   WEIGHT_LOSS: [
     {
-      focus: "Calorie Deficit & Fat Loss",
-      nutrition: "Prioritize high-volume, low-calorie foods like leafy greens, berries, and lean protein (chicken, white fish) to stay full while in a deficit.",
-      exercise: "Combine 3 days of full-body strength training with 20-30 mins of LISS cardio (brisk walking/incline treadmill) to burn fat while preserving muscle.",
+      category: "nutrition",
+      text: "Drink 500ml of cold water 30 minutes before meals to naturally reduce calorie intake.",
     },
     {
-      focus: "Satiety & Fiber Optimization",
-      nutrition: "Aim for 30g+ of dietary fiber daily from chia seeds, lentils, and oats. Fiber slows digestion and keeps hunger hormones in check.",
-      exercise: "Try Zone 2 cardio (steady-state aerobic exercise where you can hold a conversation) for 35-45 minutes to maximize fat oxidation.",
+      category: "exercise",
+      text: "Combine 3 days of strength training with 20-30 mins of incline walking to burn fat while preserving muscle.",
     },
     {
-      focus: "Hydration & Metabolism",
-      nutrition: "Drink 500ml of cold water 30 minutes before every main meal. Studies show this naturally reduces calorie intake by up to 13%.",
-      exercise: "Incorporate high-intensity interval training (HIIT) 1-2 times per week for EPOC (excess post-exercise oxygen consumption) calorie burn.",
+      category: "nutrition",
+      text: "Prioritize high-volume foods like leafy greens, cucumber, and lean protein to stay full on a deficit.",
+    },
+    {
+      category: "exercise",
+      text: "Aim for 8,000 to 10,000 steps daily — non-exercise activity (NEAT) accounts for major fat loss.",
     },
   ],
   WEIGHT_GAIN: [
     {
-      focus: "Calorie Surplus & Mass",
-      nutrition: "Eat nutrient-dense, calorie-rich foods like avocados, nuts, peanut butter, whole milk, and olive oil to meet surplus targets comfortably.",
-      exercise: "Focus on heavy compound lifts (Squats, Deadlifts, Bench Press) in the 6-10 rep range with 2-3 minutes rest between sets.",
+      category: "nutrition",
+      text: "Include calorie-dense foods like peanut butter, avocados, and whole oats to hit your surplus target easily.",
     },
     {
-      focus: "Protein Synthesis & Recovery",
-      nutrition: "Consume a protein & carb snack (e.g. Greek yogurt with banana & honey) within 45 minutes after training to maximize muscle growth.",
-      exercise: "Keep cardio to a moderate 15-20 minutes twice a week for cardiovascular health without burning off your muscle-building surplus.",
+      category: "exercise",
+      text: "Focus on heavy compound lifts (Squats, Bench, Rows) with 2-3 minutes rest between sets for maximum mass.",
     },
   ],
   MUSCLE_GAIN: [
     {
-      focus: "Hypertrophy & Macro Split",
-      nutrition: "Aim for 1.8g - 2.2g of protein per kg of bodyweight. Distribute protein evenly across 4 meals (approx. 30-40g per meal).",
-      exercise: "Train each muscle group twice per week with progressive overload — increase weight, reps, or control tempo over time.",
+      category: "nutrition",
+      text: "Consume 20-30g of fast-digesting protein and carbs within 45 mins after workouts to fuel muscle synthesis.",
     },
     {
-      focus: "Pre-Workout Fueling",
-      nutrition: "Eat fast-digesting complex carbs (e.g. rice cakes with almond butter or oatmeal) 60-90 minutes before heavy lifting for peak energy.",
-      exercise: "Ensure 48-72 hours of recovery for trained muscle groups. Sleep 7-9 hours to maximize human growth hormone (HGH) release.",
+      category: "exercise",
+      text: "Train each muscle group twice weekly with progressive overload — gradually increase weight or reps.",
     },
   ],
   MAINTENANCE: [
     {
-      focus: "Energy Balance & Vitality",
-      nutrition: "Follow the 80/20 rule — 80% whole nutrient-dense foods (veggies, lean meats, whole grains) and 20% flexible food choices.",
-      exercise: "Maintain a balanced routine: 3 days resistance training + 2 days cardiovascular conditioning + daily 8,000-10,000 steps.",
+      category: "nutrition",
+      text: "Follow the 80/20 balance — 80% whole nutrient-dense foods and 20% flexible treats.",
     },
     {
-      focus: "Metabolic Health & Longevity",
-      nutrition: "Include colorful antioxidant-rich berries, dark leafy greens, and omega-3 rich salmon or walnuts to combat inflammation.",
-      exercise: "Integrate mobility and core stability work (yoga, Pilates, or foam rolling) for 10-15 mins daily to prevent injuries.",
+      category: "exercise",
+      text: "Maintain a routine of 3 days resistance training plus daily mobility and core exercises.",
     },
   ],
 };
 
 export function SmartTipBar({ userGoal = "WEIGHT_LOSS" }: SmartTipBarProps) {
-  const goalKey = TIPS_DATABASE[userGoal] ? userGoal : "WEIGHT_LOSS";
-  const tipsList = TIPS_DATABASE[goalKey];
+  const goalKey = ALL_TIPS[userGoal] ? userGoal : "WEIGHT_LOSS";
+  const tipsList = ALL_TIPS[goalKey];
 
-  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleNextTip = () => {
-    setCurrentTipIndex((prev) => (prev + 1) % tipsList.length);
-  };
+  // Auto-rotate advice every 10 seconds silently
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % tipsList.length);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [tipsList.length]);
 
-  const activeTip = tipsList[currentTipIndex];
-  const formattedGoalLabel =
-    goalKey === "WEIGHT_LOSS"
-      ? "Weight Loss Goal"
-      : goalKey === "MUSCLE_GAIN"
-      ? "Muscle Build Goal"
-      : goalKey === "WEIGHT_GAIN"
-      ? "Weight Gain Goal"
-      : "Maintenance Goal";
+  const activeTip = tipsList[currentIndex];
+  const isNutrition = activeTip.category === "nutrition";
 
   return (
-    <div className="rounded-3xl border border-emerald-100 dark:border-emerald-950/60 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-slate-50 dark:to-slate-900/60 p-5 sm:p-6 shadow-sm shadow-emerald-900/5 relative overflow-hidden">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 border-b border-emerald-100/80 dark:border-slate-800 pb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-600/20">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-              Smart Goal Recommendations
-            </h3>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-              Personalized advice based on your current objectives
-            </span>
-          </div>
+    <div className="rounded-2xl border border-emerald-100 dark:border-emerald-950/80 bg-gradient-to-r from-emerald-50 via-white to-emerald-50/50 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-900 p-3.5 shadow-2xs">
+      <div className="flex items-center gap-3">
+        {/* Category Icon */}
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+          {isNutrition ? <Lightbulb className="h-4 w-4" /> : <Dumbbell className="h-4 w-4" />}
         </div>
 
-        <div className="flex items-center gap-2">
-          <Badge className="bg-emerald-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 border-none">
-            {formattedGoalLabel}
-          </Badge>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleNextTip}
-            className="rounded-xl h-8 text-xs font-bold border-emerald-200 dark:border-slate-700 hover:bg-emerald-100/60 dark:hover:bg-slate-800 gap-1.5"
-          >
-            <RefreshCw className="h-3 w-3 text-emerald-600" /> Refresh Advice
-          </Button>
-        </div>
-      </div>
-
-      {/* Focus Pill */}
-      <div className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold">
-        <Flame className="h-3.5 w-3.5 text-emerald-600" /> Focus: {activeTip.focus}
-      </div>
-
-      {/* 2-Column Tips Grid: Nutrition vs Exercise */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Diet & Nutrition Tip */}
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-emerald-100 dark:border-slate-800 space-y-2 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-extrabold text-emerald-700 dark:text-emerald-400">
-            <Lightbulb className="h-4 w-4" />
-            <span>Nutrition & Meal Strategy</span>
+        {/* Single Advice Text */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+            <Sparkles className="h-3 w-3" />
+            <span>{isNutrition ? "Nutrition Tip" : "Exercise Advice"}</span>
           </div>
-          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-            {activeTip.nutrition}
-          </p>
-        </div>
-
-        {/* Exercise & Workout Tip */}
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-emerald-100 dark:border-slate-800 space-y-2 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-extrabold text-teal-700 dark:text-teal-400">
-            <Dumbbell className="h-4 w-4" />
-            <span>Exercise & Workout Strategy</span>
-          </div>
-          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-            {activeTip.exercise}
+          <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate sm:whitespace-normal">
+            {activeTip.text}
           </p>
         </div>
       </div>

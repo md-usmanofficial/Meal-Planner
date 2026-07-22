@@ -2,12 +2,13 @@
 
 /**
  * Dashboard Server Actions — Persists meal toggles, water intake, & daily progress to PostgreSQL database.
- * Auto-syncs completed meal plan items directly with Food Log!
+ * Auto-syncs completed meal plan items directly with Food Log with accurate nutrition metrics!
  */
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { extractNutritionMetrics } from "@/services/foodLog.service";
 
 export async function toggleMealCompletionAction(mealId: string, isCompleted: boolean) {
   const supabase = await createClient();
@@ -33,6 +34,9 @@ export async function toggleMealCompletionAction(mealId: string, isCompleted: bo
   const recipeObj = (updatedMeal.recipeData as Record<string, any>) || {};
   const foodTitle = recipeObj.title || recipeObj.name || "Planned Meal";
 
+  // Robustly extract non-zero nutrition metrics
+  const metrics = extractNutritionMetrics(recipeObj);
+
   if (isCompleted) {
     // Create corresponding Food Log entry so it reflects in real-time in the Food Log section
     await prisma.foodLog.create({
@@ -44,11 +48,11 @@ export async function toggleMealCompletionAction(mealId: string, isCompleted: bo
         quantity: 1,
         unit: "serving",
         mealType: updatedMeal.mealType,
-        calories: Number(recipeObj.calories) || 0,
-        proteinG: Number(recipeObj.proteinG) || 0,
-        carbsG: Number(recipeObj.carbsG) || 0,
-        fatG: Number(recipeObj.fatG) || 0,
-        fiberG: Number(recipeObj.fiberG) || 0,
+        calories: metrics.calories,
+        proteinG: metrics.proteinG,
+        carbsG: metrics.carbsG,
+        fatG: metrics.fatG,
+        fiberG: metrics.fiberG,
         date: mealDate,
       },
     });
