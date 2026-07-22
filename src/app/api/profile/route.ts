@@ -10,6 +10,8 @@ import { createClient } from "@/lib/supabase/server";
 import { ProfileService } from "@/services/profile.service";
 import { onboardingSchema } from "@/lib/validations/profile";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const supabase = await createClient();
   const {

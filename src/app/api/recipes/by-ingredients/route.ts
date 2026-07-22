@@ -6,6 +6,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { RecipeService } from "@/services/recipe.service";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const rawIngredients = searchParams.get("ingredients") || "";
