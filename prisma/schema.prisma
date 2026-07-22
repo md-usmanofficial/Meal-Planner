@@ -1,0 +1,291 @@
+// See: https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// ENUMS
+// ---------------------------------------------------------------------------
+
+enum ActivityLevel {
+  SEDENTARY        // Little or no exercise
+  LIGHTLY_ACTIVE   // Light exercise 1–3 days/week
+  MODERATELY_ACTIVE // Moderate exercise 3–5 days/week
+  VERY_ACTIVE      // Hard exercise 6–7 days/week
+  EXTRA_ACTIVE     // Very hard exercise + physical job
+}
+
+enum Goal {
+  WEIGHT_LOSS
+  WEIGHT_GAIN
+  MAINTENANCE
+  MUSCLE_GAIN
+}
+
+enum DietaryPreference {
+  NONE
+  VEGETARIAN
+  VEGAN
+  HALAL
+  KETO
+  GLUTEN_FREE
+  PALEO
+}
+
+enum PlanType {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+  DESSERT
+}
+
+enum FavoriteType {
+  RECIPE
+  FOOD
+  MEAL_PLAN
+}
+
+enum Units {
+  METRIC
+  IMPERIAL
+}
+
+// ---------------------------------------------------------------------------
+// MODELS
+// ---------------------------------------------------------------------------
+
+/// User profile — extends Supabase auth.users
+model Profile {
+  id               String            @id @default(uuid())
+  /// References auth.users.id in Supabase
+  userId           String            @unique
+  name             String
+  gender           String?
+  age              Int?
+  /// Height in centimetres
+  heightCm         Float?
+  /// Current weight in kilograms
+  weightKg         Float?
+  /// Target weight in kilograms
+  targetWeightKg   Float?
+  activityLevel    ActivityLevel     @default(SEDENTARY)
+  goal             Goal              @default(MAINTENANCE)
+  dietaryPreference DietaryPreference @default(NONE)
+  /// Array of allergy strings, e.g. ["peanuts", "gluten"]
+  allergies        String[]          @default([])
+  /// Array of health condition strings, e.g. ["diabetes", "hypertension"]
+  healthConditions String[]          @default([])
+  avatarUrl        String?
+  isOnboardingComplete Boolean       @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@map("profiles")
+}
+
+/// Auto-calculated nutrition goals — recalculated whenever profile changes
+model NutritionGoal {
+  id         String   @id @default(uuid())
+  /// References auth.users.id
+  userId     String   @unique
+  bmi        Float?
+  bmr        Float?
+  tdee       Float?
+  /// Daily calorie target
+  calories   Int?
+  /// Daily protein target in grams
+  proteinG   Int?
+  /// Daily carbohydrates target in grams
+  carbsG     Int?
+  /// Daily fat target in grams
+  fatG       Int?
+  updatedAt  DateTime @updatedAt
+
+  @@map("nutrition_goals")
+}
+
+/// A meal plan (daily, weekly, or monthly)
+model MealPlan {
+  id        String    @id @default(uuid())
+  userId    String
+  name      String?
+  startDate DateTime
+  endDate   DateTime
+  planType  PlanType  @default(DAILY)
+  meals     Meal[]
+  isSaved   Boolean   @default(false)
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("meal_plans")
+}
+
+/// An individual meal within a plan
+model Meal {
+  id         String   @id @default(uuid())
+  mealPlanId String
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  mealType   MealType
+  /// External recipe ID from Spoonacular or TheMealDB
+  recipeId   String?
+  /// Snapshot of recipe data from API at time of saving
+  recipeData Json?
+  servings   Float    @default(1)
+  /// The specific date this meal is planned for
+  date       DateTime
+  isCompleted Boolean @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([mealPlanId])
+  @@map("meals")
+}
+
+/// A food item logged by the user for a specific meal and date
+model FoodLog {
+  id       String   @id @default(uuid())
+  userId   String
+  date     DateTime
+  /// External food ID from USDA or Open Food Facts
+  foodId   String
+  foodName String
+  /// Full nutrition snapshot from the API
+  foodData Json
+  quantity Float
+  unit     String
+  /// Calculated at log time based on quantity
+  calories Float
+  proteinG Float
+  carbsG   Float
+  fatG     Float
+  fiberG   Float?
+  mealType MealType
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+  @@map("food_logs")
+}
+
+/// Daily weight entry
+model WeightLog {
+  id       String   @id @default(uuid())
+  userId   String
+  weightKg Float
+  date     DateTime
+  notes    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("weight_logs")
+}
+
+/// Water intake entry (one record per intake event)
+model WaterLog {
+  id       String   @id @default(uuid())
+  userId   String
+  /// Amount in millilitres
+  amountMl Int
+  date     DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+  @@map("water_logs")
+}
+
+/// User-saved favorites (recipes, foods, or meal plans)
+model Favorite {
+  id         String       @id @default(uuid())
+  userId     String
+  itemType   FavoriteType
+  /// External ID (e.g. Spoonacular recipe id, USDA food id)
+  externalId String
+  /// Snapshot of item data so it can be displayed offline
+  itemData   Json
+  createdAt  DateTime     @default(now())
+
+  @@unique([userId, itemType, externalId])
+  @@index([userId])
+  @@map("favorites")
+}
+
+/// Recently viewed recipes and foods
+model RecentlyViewed {
+  id         String   @id @default(uuid())
+  userId     String
+  itemType   String
+  externalId String
+  itemData   Json
+  viewedAt   DateTime @default(now())
+
+  @@unique([userId, itemType, externalId])
+  @@index([userId])
+  @@map("recently_viewed")
+}
+
+/// In-app notifications
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  /// e.g. "meal_reminder", "water_reminder", "goal_achieved"
+  type      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+/// Per-user application settings
+model UserSettings {
+  id             String  @id @default(uuid())
+  userId         String  @unique
+  darkMode       Boolean @default(false)
+  units          Units   @default(METRIC)
+  emailNotifs    Boolean @default(true)
+  mealReminders  Boolean @default(true)
+  waterReminders Boolean @default(true)
+  waterGoalMl    Int     @default(2000)
+  updatedAt      DateTime @updatedAt
+
+  @@map("user_settings")
+}
+
+/// Aggregated daily nutrition & progress snapshot
+model DailyProgress {
+  id               String   @id @default(uuid())
+  userId           String
+  date             DateTime
+  caloriesConsumed Float    @default(0)
+  caloriesGoal     Float    @default(0)
+  proteinG         Float    @default(0)
+  carbsG           Float    @default(0)
+  fatG             Float    @default(0)
+  waterMl          Int      @default(0)
+  waterGoalMl      Int      @default(2000)
+  mealsCompleted   Int      @default(0)
+  mealsTotal       Int      @default(0)
+  streak           Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@map("daily_progress")
+}
