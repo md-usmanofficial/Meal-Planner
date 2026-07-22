@@ -8,6 +8,7 @@
  * - Water slot ticks load from water_logs table on page refresh.
  * - Deterministic time rank sorting guarantees schedule items never shift position when ticked.
  * - AI recipes carry full ingredients & step-by-step instructions into RecipeDetailModal.
+ * - Features SmartTipBar for goal-based nutrition & exercise recommendations!
  */
 
 import { useState, useEffect } from "react";
@@ -16,6 +17,7 @@ import { NutritionReport } from "@/components/dashboard/NutritionReport";
 import { DailyIntake } from "@/components/dashboard/DailyIntake";
 import { ActivityWidget, type ActivityDayData } from "@/components/dashboard/ActivityWidget";
 import { FeaturedRecipe } from "@/components/dashboard/FeaturedRecipe";
+import { SmartTipBar } from "@/components/dashboard/SmartTipBar";
 import { RecipeDetailModal } from "@/components/recipes/RecipeDetailModal";
 import { PlanGeneratorDialog } from "@/components/meal-plans/PlanGeneratorDialog";
 import { ManualPlanBuilderDialog } from "@/components/meal-plans/ManualPlanBuilderDialog";
@@ -337,6 +339,9 @@ export default function DashboardPage() {
           />
         </div>
       </div>
+
+      {/* NEW: Smart Goal-Based Nutrition & Exercise Tip Bar */}
+      <SmartTipBar userGoal={profile?.goal} />
 
       {/* Recipe Detail Modal for Explore Recipe CTA */}
       <RecipeDetailModal
