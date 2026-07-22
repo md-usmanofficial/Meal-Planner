@@ -28,7 +28,7 @@ export class SettingsService {
           userId,
           darkMode: false,
           units: "METRIC",
-          emailNotifications: true,
+          emailNotifs: true,
           mealReminders: true,
         },
       });
@@ -47,13 +47,13 @@ export class SettingsService {
         userId,
         darkMode: data.darkMode ?? false,
         units: data.units ?? "METRIC",
-        emailNotifications: data.emailNotifications ?? true,
+        emailNotifs: data.emailNotifications ?? true,
         mealReminders: data.mealReminders ?? true,
       },
       update: {
         ...(data.darkMode !== undefined && { darkMode: data.darkMode }),
         ...(data.units !== undefined && { units: data.units }),
-        ...(data.emailNotifications !== undefined && { emailNotifications: data.emailNotifications }),
+        ...(data.emailNotifications !== undefined && { emailNotifs: data.emailNotifications }),
         ...(data.mealReminders !== undefined && { mealReminders: data.mealReminders }),
       },
     });

@@ -7,8 +7,7 @@
  * Validates with Zod on submit. Shows field-level and global error messages.
  */
 
-import { useActionState } from "react";
-import { useEffect } from "react";
+import { Suspense, useActionState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -24,7 +23,7 @@ import type { AuthActionState } from "@/lib/validations/auth";
 
 const initialState: AuthActionState = null;
 
-export default function LoginPage() {
+function LoginFormContent() {
   const [state, formAction, isPending] = useActionState(signInAction, initialState);
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
@@ -138,5 +137,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="p-4 text-center text-sm text-muted-foreground">Loading...</div>}>
+      <LoginFormContent />
+    </Suspense>
   );
 }

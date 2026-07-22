@@ -214,7 +214,7 @@ export class RecipeService {
 
     if (filters.diet) {
       const d = filters.diet.toLowerCase();
-      results = results.filter((r) => r.diets.some((diet) => diet.toLowerCase().includes(d)));
+      results = results.filter((r) => r.diets?.some((diet) => diet.toLowerCase().includes(d)));
     }
 
     if (filters.maxReadyTime) {

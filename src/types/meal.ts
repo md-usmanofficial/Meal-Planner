@@ -40,11 +40,21 @@ export interface MealRecipeSnapshot {
   image: string;
   readyInMinutes: number;
   servings: number;
-  calories: number;
-  proteinG: number;
-  carbsG: number;
-  fatG: number;
-  source: "spoonacular" | "themealdb";
+  summary?: string;
+  ingredients?: any[];
+  instructions?: any[];
+  nutrition?: {
+    calories: number;
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+    fiberG?: number | null;
+  };
+  calories?: number;
+  proteinG?: number;
+  carbsG?: number;
+  fatG?: number;
+  source?: string;
 }
 
 /**

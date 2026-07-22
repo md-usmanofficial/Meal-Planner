@@ -314,6 +314,7 @@ export class MealPlanService {
       instructions: instructions
         ? [{ stepNumber: 1, description: instructions }]
         : undefined,
+      source: "custom",
     };
 
     return await prisma.meal.update({
@@ -509,7 +510,7 @@ export class MealPlanService {
       // Add main meals from everyday recipes
       for (const mType of mealTypes) {
         const matchingRecipe = EVERYDAY_SIMPLE_RECIPES.find((r) =>
-          r.dishTypes.some((dt) => dt.toLowerCase().includes(mType.toLowerCase()))
+          r.dishTypes?.some((dt) => dt.toLowerCase().includes(mType.toLowerCase()))
         ) || EVERYDAY_SIMPLE_RECIPES[0];
 
         mealsToCreate.push({

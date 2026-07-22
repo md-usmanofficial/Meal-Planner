@@ -91,7 +91,7 @@ export default async function RecipeDetailPage({
       <div className="rounded-3xl border border-border/80 bg-card p-6 space-y-4">
         <h3 className="text-base font-bold text-foreground">Ingredients</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {recipe.ingredients.map((ing) => (
+          {recipe.ingredients?.map((ing) => (
             <div key={ing.id} className="flex items-center gap-2.5 p-3 rounded-xl border border-border/60 bg-muted/20">
               <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
               <span className="text-xs font-semibold text-foreground">{ing.name}</span>
@@ -107,7 +107,7 @@ export default async function RecipeDetailPage({
       <div className="rounded-3xl border border-border/80 bg-card p-6 space-y-4">
         <h3 className="text-base font-bold text-foreground">Instructions</h3>
         <div className="space-y-4">
-          {recipe.instructions.map((step) => (
+          {recipe.instructions?.map((step) => (
             <div key={step.stepNumber} className="flex gap-4">
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-extrabold text-xs">
                 {step.stepNumber}

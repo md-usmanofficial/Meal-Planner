@@ -65,9 +65,9 @@ export function RecipeCard({
         </h4>
 
         {/* Diet Badges */}
-        {recipe.diets.length > 0 && (
+        {(recipe.diets?.length || 0) > 0 && (
           <div className="flex flex-wrap gap-1">
-            {recipe.diets.slice(0, 2).map((diet) => (
+            {recipe.diets?.slice(0, 2).map((diet) => (
               <Badge
                 key={diet}
                 variant="outline"
