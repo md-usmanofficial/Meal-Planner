@@ -25,6 +25,7 @@ export type DietaryPreference =
   | "PALEO";
 
 export type Units = "METRIC" | "IMPERIAL";
+export type UnitSystem = Units;
 
 export interface UserProfile {
   id: string;
