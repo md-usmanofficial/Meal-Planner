@@ -188,9 +188,9 @@ export interface RecipeNutrition {
   proteinG: number;
   carbsG: number;
   fatG: number;
-  fiberG: number | null;
-  sugarG: number | null;
-  sodiumMg: number | null;
+  fiberG?: number | null;
+  sugarG?: number | null;
+  sodiumMg?: number | null;
 }
 
 // ---------------------------------------------------------------------------
