@@ -177,8 +177,11 @@ export interface RecipeIngredient {
   name: string;
   amount: number;
   unit: string;
-  image: string | null;
+  image?: string | null;
 }
+
+export type Ingredient = RecipeIngredient;
+export type InstructionStep = RecipeInstruction;
 
 export interface RecipeNutrition {
   calories: number;

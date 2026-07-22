@@ -55,7 +55,7 @@ export function RecipeSearchFilters({
         </div>
 
         {/* Diet Filter */}
-        <Select value={diet} onValueChange={onDietChange}>
+        <Select value={diet} onValueChange={(val: any) => val && onDietChange(val)}>
           <SelectTrigger className="h-10 rounded-xl bg-background border-border/80 text-xs">
             <SelectValue placeholder="All Diets" />
           </SelectTrigger>
@@ -72,7 +72,7 @@ export function RecipeSearchFilters({
         </Select>
 
         {/* Max Ready Time */}
-        <Select value={maxReadyTime} onValueChange={onMaxReadyTimeChange}>
+        <Select value={maxReadyTime} onValueChange={(val: any) => val && onMaxReadyTimeChange(val)}>
           <SelectTrigger className="h-10 rounded-xl bg-background border-border/80 text-xs">
             <SelectValue placeholder="Any Cooking Time" />
           </SelectTrigger>
@@ -86,7 +86,7 @@ export function RecipeSearchFilters({
         </Select>
 
         {/* Max Calories */}
-        <Select value={maxCalories} onValueChange={onMaxCaloriesChange}>
+        <Select value={maxCalories} onValueChange={(val: any) => val && onMaxCaloriesChange(val)}>
           <SelectTrigger className="h-10 rounded-xl bg-background border-border/80 text-xs">
             <SelectValue placeholder="Any Calorie Target" />
           </SelectTrigger>

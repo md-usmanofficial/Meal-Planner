@@ -54,40 +54,34 @@ export const commonHealthConditions = [
 
 // Step 1: Physical Metrics
 export const physicalMetricsSchema = z.object({
-  gender: z.enum(genderOptions, { required_error: "Please select your gender" }),
+  gender: z.enum(genderOptions),
   age: z
-    .number({ invalid_type_error: "Please enter a valid age" })
+    .number()
     .min(10, "Age must be at least 10")
     .max(120, "Age must be 120 or less"),
   heightCm: z
-    .number({ invalid_type_error: "Please enter a valid height in cm" })
+    .number()
     .min(50, "Height must be at least 50 cm")
     .max(250, "Height must be 250 cm or less"),
   weightKg: z
-    .number({ invalid_type_error: "Please enter a valid weight in kg" })
+    .number()
     .min(20, "Weight must be at least 20 kg")
     .max(300, "Weight must be 300 kg or less"),
   targetWeightKg: z
-    .number({ invalid_type_error: "Please enter a valid target weight in kg" })
+    .number()
     .min(20, "Target weight must be at least 20 kg")
     .max(300, "Target weight must be 300 kg or less"),
 });
 
 // Step 2: Goals & Activity
 export const goalsActivitySchema = z.object({
-  activityLevel: z.enum(activityLevelOptions, {
-    required_error: "Please select your activity level",
-  }),
-  goal: z.enum(goalOptions, {
-    required_error: "Please select your primary fitness goal",
-  }),
+  activityLevel: z.enum(activityLevelOptions),
+  goal: z.enum(goalOptions),
 });
 
 // Step 3: Diet & Health
 export const dietHealthSchema = z.object({
-  dietaryPreference: z.enum(dietaryPreferenceOptions, {
-    required_error: "Please select a dietary preference",
-  }),
+  dietaryPreference: z.enum(dietaryPreferenceOptions),
   allergies: z.array(z.string()).default([]),
   healthConditions: z.array(z.string()).default([]),
 });

@@ -92,6 +92,31 @@ export async function replaceMealWithCustomAction(params: {
   return { success: true };
 }
 
+export async function addCustomMealItemAction(params: {
+  mealPlanId: string;
+  date: Date;
+  mealType: MealType;
+  title: string;
+  calories: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  fiberG?: number;
+  instructions?: string;
+}) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  await MealPlanService.addCustomMealItem(params);
+  revalidatePath("/meal-plans");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
 export async function createManualMealPlanFullAction(params: {
   name: string;
   daysCount: number;

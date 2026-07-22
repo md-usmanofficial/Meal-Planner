@@ -53,7 +53,7 @@ export function AddCustomMealDialog({ mealPlanId, dateStr, onSuccess }: AddCusto
     try {
       await addCustomMealItemAction({
         mealPlanId,
-        date: dateStr,
+        date: new Date(dateStr),
         mealType,
         title: name.trim(),
         calories: Number(calories) || 0,

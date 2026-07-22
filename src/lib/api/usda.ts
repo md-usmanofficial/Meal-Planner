@@ -28,7 +28,7 @@ const NUTRIENT_IDS = {
 
 async function usdaFetch<T>(
   endpoint: string,
-  params: Record<string, string | number | string[]> = {}
+  params: Record<string, string | number | readonly string[] | string[]> = {}
 ): Promise<T> {
   const url = new URL(`${BASE_URL}${endpoint}`);
   url.searchParams.set("api_key", API_KEY);
@@ -67,7 +67,7 @@ export async function searchFoods(
 ): Promise<USDASearchResult> {
   return usdaFetch<USDASearchResult>(USDA.ENDPOINTS.SEARCH, {
     query,
-    dataType: USDA.DEFAULTS.DATA_TYPE,
+    dataType: [...USDA.DEFAULTS.DATA_TYPE],
     pageSize,
     pageNumber,
     sortBy: "dataType.keyword",
@@ -125,9 +125,9 @@ export function normalizeUSDAFood(raw: USDAFood): Food {
       proteinG: protein,
       carbsG: carbs,
       fatG: fat,
-      fiberG: fiber,
-      sugarG: sugar,
-      sodiumMg: sodium,
+      fiberG: fiber ?? undefined,
+      sugarG: sugar ?? undefined,
+      sodiumMg: sodium ?? undefined,
     },
   };
 }

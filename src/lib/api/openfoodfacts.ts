@@ -95,9 +95,9 @@ export function normalizeOpenFoodFactsProduct(
       proteinG: n.proteins_100g ?? 0,
       carbsG: n.carbohydrates_100g ?? 0,
       fatG: n.fat_100g ?? 0,
-      fiberG: n.fiber_100g ?? null,
-      sugarG: n.sugars_100g ?? null,
-      sodiumMg: n.sodium_100g != null ? n.sodium_100g * 1000 : null,
+      fiberG: n.fiber_100g ?? undefined,
+      sugarG: n.sugars_100g ?? undefined,
+      sodiumMg: n.sodium_100g != null ? n.sodium_100g * 1000 : undefined,
     },
   };
 }

@@ -152,11 +152,6 @@ function applyGoalRules(
       filters.minProtein = 30;
       break;
 
-    case "KETO":
-      // Hard carb cap
-      filters.maxCarbs = 10;
-      break;
-
     case "WEIGHT_GAIN":
     case "MAINTENANCE":
       // No additional restrictions — balanced macros

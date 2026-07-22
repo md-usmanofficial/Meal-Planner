@@ -97,8 +97,8 @@ export interface Food {
   servingUnit: string;
   /** Nutrition per serving */
   nutrition: Macros & {
-    sugarG: number | null;
-    sodiumMg: number | null;
+    sugarG?: number | null;
+    sodiumMg?: number | null;
   };
 }
 

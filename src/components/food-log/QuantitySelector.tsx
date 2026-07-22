@@ -70,7 +70,7 @@ export function QuantitySelector({ food, onLog, isLoading = false }: QuantitySel
         {/* Unit */}
         <div className="space-y-1">
           <Label className="text-[10px] font-bold text-muted-foreground uppercase">Unit</Label>
-          <Select value={unit} onValueChange={setUnit}>
+          <Select value={unit} onValueChange={(val: any) => val && setUnit(val)}>
             <SelectTrigger className="h-9 text-xs rounded-xl bg-background">
               <SelectValue />
             </SelectTrigger>
@@ -86,7 +86,7 @@ export function QuantitySelector({ food, onLog, isLoading = false }: QuantitySel
         {/* Meal Slot */}
         <div className="space-y-1">
           <Label className="text-[10px] font-bold text-muted-foreground uppercase">Meal Slot</Label>
-          <Select value={mealType} onValueChange={(val) => setMealType(val as MealType)}>
+          <Select value={mealType} onValueChange={(val: any) => val && setMealType(val as MealType)}>
             <SelectTrigger className="h-9 text-xs rounded-xl bg-background font-semibold">
               <SelectValue />
             </SelectTrigger>
