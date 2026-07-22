@@ -2,6 +2,7 @@
 
 /**
  * Dashboard Server Actions — Persists meal toggles, water intake, & daily progress to PostgreSQL database.
+ * Auto-syncs completed meal plan items directly with Food Log!
  */
 
 import { revalidatePath } from "next/cache";
@@ -21,13 +22,58 @@ export async function toggleMealCompletionAction(mealId: string, isCompleted: bo
   }
 
   // Update Prisma meal record
-  await prisma.meal.update({
+  const updatedMeal = await prisma.meal.update({
     where: { id: mealId },
     data: { isCompleted },
   });
 
+  const mealDate = new Date(updatedMeal.date);
+  mealDate.setHours(0, 0, 0, 0);
+
+  const recipeObj = (updatedMeal.recipeData as Record<string, any>) || {};
+  const foodTitle = recipeObj.title || recipeObj.name || "Planned Meal";
+
+  if (isCompleted) {
+    // Create corresponding Food Log entry so it reflects in real-time in the Food Log section
+    await prisma.foodLog.create({
+      data: {
+        userId: user.id,
+        foodId: updatedMeal.id,
+        foodName: foodTitle,
+        foodData: recipeObj,
+        quantity: 1,
+        unit: "serving",
+        mealType: updatedMeal.mealType,
+        calories: Number(recipeObj.calories) || 0,
+        proteinG: Number(recipeObj.proteinG) || 0,
+        carbsG: Number(recipeObj.carbsG) || 0,
+        fatG: Number(recipeObj.fatG) || 0,
+        fiberG: Number(recipeObj.fiberG) || 0,
+        date: mealDate,
+      },
+    });
+  } else {
+    // Remove corresponding Food Log entry if unticked
+    const existingLog = await prisma.foodLog.findFirst({
+      where: {
+        userId: user.id,
+        foodName: foodTitle,
+        mealType: updatedMeal.mealType,
+        date: {
+          gte: mealDate,
+          lt: new Date(mealDate.getTime() + 24 * 60 * 60 * 1000),
+        },
+      },
+    });
+    if (existingLog) {
+      await prisma.foodLog.delete({ where: { id: existingLog.id } });
+    }
+  }
+
   revalidatePath("/dashboard");
+  revalidatePath("/food-log");
   revalidatePath("/meal-plans");
+  revalidatePath("/analytics");
   return { success: true };
 }
 
@@ -108,6 +154,7 @@ export async function syncDailyProgressAction(params: {
   });
 
   revalidatePath("/dashboard");
+  revalidatePath("/food-log");
   revalidatePath("/analytics");
   return { success: true };
 }
@@ -132,7 +179,6 @@ export async function toggleWaterSlotAction(waterSlotId: string, amountMl: numbe
       },
     });
   } else {
-    // Remove one water log entry for today
     const firstLog = await prisma.waterLog.findFirst({
       where: { userId: user.id, date: { gte: today } },
     });
@@ -142,6 +188,8 @@ export async function toggleWaterSlotAction(waterSlotId: string, amountMl: numbe
   }
 
   revalidatePath("/dashboard");
+  revalidatePath("/food-log");
+  revalidatePath("/analytics");
   return { success: true };
 }
 
